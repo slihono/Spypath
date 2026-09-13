@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name ="author" content="Seneve Lihono">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpyPath Lab</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        spidey: {
+                            red: '#E53E3E',
+                            redGlow: '#FF4D4D',
+                            blue: '#1A365D',
+                            blueLight: '#3182CE',
+                            darkBg: '#0B0F19',
+                            cardBg: '#131A26',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Inter:wght@300;400;600;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .spider-web {
+            background-image: radial-gradient(rgba(229, 62, 62, 0.15) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+    </style>
+</head>
+<body class="bg-spidey-darkBg text-slate-100 min-h-screen flex flex-col spider-web antialiased">
+
+    <!-- Header -->
+    <header class="border-b border-spidey-red/20 bg-spidey-darkBg/90 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+            <div class="relative w-10 h-10 bg-spidey-red rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(229,62,62,0.6)]">
+                <i class="fa-solid fa-spider text-white text-xl animate-pulse"></i>
+            </div>
+            <div>
+                <h1 class="text-xl md:text-2xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-spidey-redGlow to-spidey-blueLight">
+                    SPIDEY PATHFINDING LABORATORY
+                </h1>
+                <p class="text-xs text-slate-400">Help the Spider explore the catacombs(DFS, BFS & UCS)</p>
+            </div>
+        </div>
+        
+        <!-- Algoritm Selector -->
+        <div class="flex bg-slate-800/80 p-1 rounded-lg border border-slate-700/50">
+            <button id="btn-dfs" onclick="setAlgorithm('DFS')" class="px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 bg-spidey-red text-white shadow-[0_0_10px_rgba(229,62,62,0.4)]">
+                DFS <span class="text-xs opacity-80">(Stack)</span>
+            </button>
+            <button id="btn-bfs" onclick="setAlgorithm('BFS')" class="px-4 py-2 rounded-md text-sm font-semibold text-slate-400 hover:text-white transition-all duration-300">
+                BFS <span class="text-xs opacity-80">(Queue)</span>
+            </button>
+             <button id="btn-ucs" onclick="setAlgorithm('UCS')" class="px-4 py-2 rounded-md text-sm font-semibold text-slate-400 hover:text-white transition-all duration-300">
+                UCS <span class="text-xs opacity-80">(Priority queue)</span>
+            </button>
+        </div>
+        <label class="text-sm text-slate-300 flex items-center gap-2">Level
+            <select id="level-select" onchange="setLevel(this.value)" class="bg-slate-800 border border-slate-700 rounded px-2 py-1 text-white"></select>
+        </label>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Graph Visualizer & State (7/12) -->
+        <section class="lg:col-span-7 flex flex-col gap-6">
+            
+            <!-- Visuel Card -->
+            <div class="bg-spidey-cardBg rounded-xl border border-slate-800 p-6 flex flex-col relative overflow-hidden shadow-2xl">
+                <!-- Spidey Glow Effect -->
+                <div class="absolute -top-12 -left-12 w-48 h-48 bg-spidey-red/5 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                    <span class="text-sm font-bold tracking-widest text-spidey-redGlow uppercase" id="algo-title">
+                        DEPTH-FIRST SEARCH (DFS)
+                    </span>
+                </div>
+
+                <!-- Web Interactive Canvas / SVG -->
+                <div class="h-[300px] flex items-center justify-center relative bg-slate-950/60 rounded-lg border border-slate-800/80 overflow-hidden">
+                    <!-- Grid background -->
+                    <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-30"></div>
+                    
+                    <!-- SVG lines and graph nodes -->
+                    <svg class="absolute inset-0 w-full h-full" id="graph-svg">
+                        <!-- Edges (Toiles d'araignées) -->
+                        <line id="edge-AB" x1="50%" y1="20%" x2="25%" y2="50%" stroke="#1e293b" stroke-width="3" stroke-dasharray="5 5"></line>
+                        <line id="edge-AC" x1="50%" y1="20%" x2="75%" y2="50%" stroke="#1e293b" stroke-width="3" stroke-dasharray="5 5"></line>
+                        <line id="edge-BD" x1="25%" y1="50%" x2="12%" y2="80%" stroke="#1e293b" stroke-width="3" stroke-dasharray="5 5"></line>
+                        <line id="edge-BE" x1="25%" y1="50%" x2="38%" y2="80%" stroke="#1e293b" stroke-width="3" stroke-dasharray="5 5"></line>
+                        <line id="edge-CF" x1="75%" y1="50%" x2="75%" y2="80%" stroke="#1e293b" stroke-width="3" stroke-dasharray="5 5"></line>
+                    </svg>
+
+                    <!-- HTML Layer Nodes (Positioned absolutely corresponding to SVGs) -->
+                    <!-- Node A (Root) -->
+                    <div id="node-A" class="absolute left-1/2 -translate-x-1/2 top-[10%] w-14 h-14 rounded-full bg-slate-800 border-2 border-slate-600 flex flex-col items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
+                        A <span class="text-[9px] text-slate-400 font-normal">Start</span>
+                    </div>
+
+                    <!-- Node B -->
+                    <div id="node-B" class="absolute left-[25%] -translate-x-1/2 top-[42%] w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
+                        B
+                    </div>
+
+                    <!-- Node C -->
+                    <div id="node-C" class="absolute left-[75%] -translate-x-1/2 top-[42%] w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
+                        C
+                    </div>
+
+                    <!-- Node D -->
+                    <div id="node-D" class="absolute left-[12%] -translate-x-1/2 top-[72%] w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
+                        D
+                    </div>
+
+                    <!-- Node E -->
+                    <div id="node-E" class="absolute left-[38%] -translate-x-1/2 top-[72%] w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
+                        E
+                    </div>
+
+                    <!-- Node F -->
+                    <div id="node-F" class="absolute left-[75%] -translate-x-1/2 top-[72%] w-14 h-14 rounded-full bg-slate-800 border-2 border-slate-600 flex flex-col items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
+                        F <span class="text-[9px] text-slate-400 font-normal">Goal</span>
+                    </div>
+
+                    <!-- Hanging Spider Animation / Active Indicator -->
+                    <div id="spidey-token" class="absolute left-[50%] top-[20%] -translate-x-1/2 -translate-y-1/2 transition-all duration-500 z-20 pointer-events-none opacity-0">
+                        <div class="relative w-10 h-10 flex items-center justify-center bg-spidey-red rounded-full border border-white animate-bounce shadow-[0_0_15px_#FF4D4D]">
+                            <i class="fa-solid fa-spider text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Controls -->
+                <div class="flex justify-center items-center gap-4 mt-4">
+                    <button onclick="prevStep()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                    <button id="btn-play" onclick="togglePlay()" class="px-6 py-2 rounded-lg bg-spidey-red hover:bg-red-500 text-white font-bold flex items-center gap-2 shadow-lg shadow-red-950 transition">
+                        <i id="play-icon" class="fa-solid fa-play"></i> <span id="play-text">Run</span>
+                    </button>
+                    <button onclick="nextStep()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                    <button onclick="resetSimulation()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition text-slate-400 hover:text-white" title="Reset simulation">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- State Monitor Card (Console Log) -->
+            <div class="bg-spidey-cardBg rounded-xl border border-slate-800 p-6 shadow-xl">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-display text-spidey-red"></i> Algorithm State Monitor
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Current Node -->
+                    <div class="bg-slate-950/80 rounded-lg p-3 border border-slate-800/80 flex flex-col justify-between">
+                        <span class="text-xs text-slate-500">Current Node</span>
+                        <span id="state-current-node" class="text-2xl font-black text-spidey-redGlow">-</span>
+                    </div>
+                    <!-- Stack / Queue -->
+                    <div class="bg-slate-950/80 rounded-lg p-3 border border-slate-800/80 flex flex-col justify-between">
+                        <span id="label-struct-type" class="text-xs text-slate-500">Stack (LIFO)</span>
+                        <span id="state-structure" class="text-sm font-bold code-font text-sky-400 overflow-x-auto truncate">[]</span>
+                    </div>
+                    <!-- Visited list -->
+                    <div class="bg-slate-950/80 rounded-lg p-3 border border-slate-800/80 flex flex-col justify-between">
+                        <span class="text-xs text-slate-500">Visited Nodes</span>
+                        <span id="state-visited" class="text-sm font-bold code-font text-emerald-400 truncate">[]</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Code IDE with language selector (5/12) -->
+        <section class="lg:col-span-5 flex flex-col gap-6">
+            
+            <!-- Coding Exercise -->
+            <div class="bg-slate-950 rounded-xl border border-slate-800 flex flex-col overflow-hidden shadow-2xl h-full">
+                <!-- Tab Headers -->
+                <div class="bg-slate-900 border-b border-slate-800 px-4 py-3 flex justify-between items-center">
+                    <h2 class="text-sm font-bold text-white"><i class="fa-solid fa-code text-spidey-red mr-2"></i>Coding Exercise</h2>
+                   
+                    <!-- Lang Selectors -->
+                    <div class="flex gap-1">
+                        <button onclick="setLanguage('python')" id="lang-python" class="px-3 py-1 rounded text-xs font-semibold code-font bg-slate-800 text-sky-400 border border-slate-700/80">
+                            Python
+                        </button>
+                        <button onclick="setLanguage('cpp')" id="lang-cpp" class="px-3 py-1 rounded text-xs font-semibold code-font text-slate-400 hover:text-slate-300">
+                            C++
+                        </button>
+                        <button onclick="setLanguage('c')" id="lang-c" class="px-3 py-1 rounded text-xs font-semibold code-font text-slate-400 hover:text-slate-300">
+                            C
+                        </button>
+                    </div>
+                </div>
+
+                <div class="px-4 pt-4">
+                    <h3 id="coding-question-title" class="text-sm font-bold text-spidey-redGlow">Coding question</h3>
+                    <p id="coding-question" class="mt-1 text-sm text-slate-300"></p>
+                </div>
+                <div class="p-4 flex-1 overflow-y-auto text-sm code-font min-h-[350px] bg-slate-950 relative">
+                    <textarea id="code-editor" spellcheck="false" aria-label="Write your code here" class="w-full h-full min-h-[330px] resize-y bg-slate-950 text-slate-200 border border-slate-800 rounded-lg p-4 leading-relaxed focus:outline-none focus:border-spidey-blueLight" placeholder="Write your solution here"></textarea>
+                </div>
+                <div class="px-4 pb-4 flex flex-wrap justify-end items-center gap-3">
+                    <span id="code-status" class="text-sm text-slate-400 mr-auto">Complete the code, then check all answers.</span>
+                    <button onclick="resetExercise()" class="px-5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">Reset exercise</button>
+                    <button onclick="validateAllAnswers()" class="px-6 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-950 transition">Check my answers</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Interactive Challenge / Student Quiz Section -->
+    <section id="student-challenge" class="max-w-7xl w-full mx-auto p-4 md:p-6 mt-2 border-t border-slate-800 flex-none">
+        <div class="bg-spidey-cardBg rounded-xl border border-slate-800 p-6 shadow-2xl">
+            <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap text-spidey-red"></i> 
+                Student Challenge
+            </h2>
+            <p class="text-sm text-slate-400 mb-4">Answer the two written questions, then complete the trace table and coding exercise for this level.</p>
+            <div id="practice-challenges" class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6"></div>
+            <h3 class="text-base font-bold text-white mb-2">Question 3: Complete the trace table</h3>
+            <p class="text-sm text-slate-400 mb-6">
+                Run <span id="quiz-algo-type" class="font-semibold text-spidey-red">DFS</span> by hand on the Spidey graph, then enter each state. The first explored node is <strong class="text-slate-200">A</strong>.
+            </p>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400">
+                            <th class="py-3 px-4 font-semibold text-xs uppercase tracking-wider">Step</th>
+                            <th class="py-3 px-4 font-semibold text-xs uppercase tracking-wider">Visited node</th>
+                            <th id="quiz-th-struct" class="py-3 px-4 font-semibold text-xs uppercase tracking-wider">Stack contents (e.g. C,B)</th>
+                            <th class="py-3 px-4 font-semibold text-xs uppercase tracking-wider">Visited list (e.g. A,B)</th>
+                            <th class="py-3 px-4 font-semibold text-xs uppercase tracking-wider text-right">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quiz-tbody">
+                        <!-- Interactive quiz rows dynamically generated -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-xs text-slate-500 mt-auto border-t border-slate-900 bg-slate-950/40">
+        Built for programming students • Inspired by Spider-Man and Algomaster
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        // Global State variables
+        let currentAlgo = 'DFS';
+        let currentLang = 'python';
+        let currentLevel = 1;
+        let currentCodingTask = null;
+        let simulationStep = 0;
+        let isPlaying = false;
+        let playInterval = null;
+
+        // Code Database with highlighted code blocks for trace steps
+        const codeRepo = {
+            DFS: {
+                python: [
+                    "def dfs(graph, start, target):",
+                    "    stack = [start] # Initialize",
+                    "    visited = set()",
+                    "    while stack:",
+                    "        current = stack.pop() # Pop",
+                    "        if current == target:",
+                    "            return True # Goal found!",
+                    "        if current not in visited:",
+                    "            visited.add(current)",
+                    "            for neighbor in reversed(graph[current]):",
+                    "                if neighbor not in visited:",
+                    "                    stack.append(neighbor) # Empiler",
+                    "    return False"
+                ],
+                cpp: [
+                    "bool dfs(unordered_map<char, vector<char>>& graph, char start, char target) {",
+                    "    stack<char> s; s.push(start); // Initialize",
+                    "    unordered_set<char> visited;",
+                    "    while (!s.empty()) {",
+                    "        char current = s.top(); s.pop(); // Pop",
+                    "        if (current == target)",
+                    "            return true; // Goal found!",
+                    "        if (visited.find(current) == visited.end()) {",
+                    "            visited.insert(current);",
+                    "            for (auto it = graph[current].rbegin(); it != graph[current].rend(); ++it) {",
+                    "                if (visited.find(*it) == visited.end())",
+                    "                    s.push(*it); // Empiler",
+                    "            }",
+                    "        }",
+                    "    }",
+                    "    return false;",
+                    "}"
+                ],
+                c: [
+                    "void dfs(int start, int target) {",
+                    "    int stack[MAX_NODES]; int top = -1;",
+                    "    stack[++top] = start; // Initialize",
+                    "    bool visited[MAX_NODES] = {false};",
+                    "    while (top >= 0) {",
+                    "        int current = stack[top--]; // Pop",
+                    "        if (current == target)",
+                    "            return; // Goal found!",
+                    "        if (!visited[current]) {",
+                    "            visited[current] = true;",
+                    "            for (int i = MAX_NODES - 1; i >= 0; i--) {",
+                    "                if (graph[current][i] == 1 && !visited[i])",
+                    "                    stack[++top] = i; // Empiler",
+                    "            }",
+                    "        }",
+                    "    }",
+                    "}"
+                ]
+            },
+            BFS: {
+                python: [
+                    "def bfs(graph, start, target):",
+                    "    queue = deque([start]) # Initialize",
+                    "    visited = {start}",
+                    "    while queue:",
+                    "        current = queue.popleft() # Dequeue",
+                    "        if current == target:",
+                    "            return True # Goal found!",
+                    "        for neighbor in graph[current]:",
+                    "            if neighbor not in visited:",
+                    "                visited.add(neighbor)",
+                    "                queue.append(neighbor) # Enqueue",
+                    "    return False"
+                ],
+                cpp: [
+                    "bool bfs(unordered_map<char, vector<char>>& graph, char start, char target) {",
+                    "    queue<char> q; q.push(start); // Initialize",
+                    "    unordered_set<char> visited; visited.insert(start);",
+                    "    while (!q.empty()) {",
+                    "        char current = q.front(); q.pop(); // Dequeue",
+                    "        if (current == target)",
+                    "            return true; // Goal found!",
+                    "        for (char neighbor : graph[current]) {",
+                    "            if (visited.find(neighbor) == visited.end()) {",
+                    "                visited.insert(neighbor);",
+                    "                q.push(neighbor); // Enqueue",
+                    "            }",
+                    "        }",
+                    "    }",
+                    "    return false;",
+                    "}"
+                ],
+                c: [
+                    "void bfs(int start, int target) {",
+                    "    int queue[MAX_NODES]; int front = 0, rear = 0;",
+                    "    queue[rear++] = start; // Initialize",
+                    "    bool visited[MAX_NODES] = {false}; visited[start] = true;",
+                    "    while (front < rear) {",
+                    "        int current = queue[front++]; // Dequeue",
+                    "        if (current == target)",
+                    "            return; // Goal found!",
+                    "        for (int i = 0; i < MAX_NODES; i++) {",
+                    "            if (graph[current][i] == 1 && !visited[i]) {",
+                    "                visited[i] = true;",
+                    "                queue[rear++] = i; // Enqueue",
+                    "            }",
+                    "        }",
+                    "    }",
+                    "}"
+                ]
+            },
+            UCS: {
+                python: [
+                    "def ucs(graph, start, target):",
+                    "    frontier = [(0, start)]  # (cost, node)",
+                    "    best_cost = {start: 0}",
+                    "    while frontier:",
+                    "        cost, current = heappop(frontier)",
+                    "        if current == target:",
+                    "            return cost",
+                    "        for neighbor, edge_cost in graph[current]:",
+                    "            new_cost = cost + edge_cost",
+                    "            if new_cost < best_cost.get(neighbor, float('inf')):",
+                    "                best_cost[neighbor] = new_cost",
+                    "                heappush(frontier, (new_cost, neighbor))",
+                    "    return False"
+                ],
+                cpp: [
+                    "int ucs(Graph& graph, char start, char target) {",
+                    "    priority_queue<State, vector<State>, greater<State>> frontier;",
+                    "    frontier.push({0, start}); map<char, int> best{{start, 0}};",
+                    "    while (!frontier.empty()) {",
+                    "        auto [cost, current] = frontier.top(); frontier.pop();",
+                    "        if (current == target)",
+                    "            return cost;",
+                    "        for (auto [neighbor, edgeCost] : graph[current]) {",
+                    "            int newCost = cost + edgeCost;",
+                    "            if (!best.count(neighbor) || newCost < best[neighbor]) {",
+                    "                best[neighbor] = newCost; frontier.push({newCost, neighbor});",
+                    "            }",
+                    "        }",
+                    "    }",
+                    "    return -1;",
+                    "}"
+                ],
+                c: [
+                    "void ucs(int start, int target) {",
+                    "    MinHeap frontier; heapPush(&frontier, (Item){start, 0});",
+                    "    int best[MAX_NODES]; initializeCosts(best, INF); best[start] = 0;",
+                    "    while (!heapEmpty(&frontier)) {",
+                    "        Item item = heapPop(&frontier); int current = item.node;",
+                    "        if (current == target)",
+                    "            return; // lowest-cost path found",
+                    "        for (int i = 0; i < MAX_NODES; i++) {",
+                    "            int newCost = best[current] + graph[current][i];",
+                    "            if (graph[current][i] > 0 && newCost < best[i]) {",
+                    "                best[i] = newCost; heapPush(&frontier, (Item){i, newCost});",
+                    "            }",
+                    "        }",
+                    "    }",
+                    "}"
+                ]
+            }
+        };
+            
+        
+
+        // These are regenerated from a fresh graph for every level.
+        let exerciseGraph;
+        let activeSimulationSteps = [];
+        let activeQuizAnswers = [];
+
+        // Nodes coordinates on the page (center points to position Spider Token)
+        const nodePositions = {
+            'A': { left: '50%', top: '20%' },
+            'B': { left: '25%', top: '50%' },
+            'C': { left: '75%', top: '50%' },
+            'D': { left: '12%', top: '80%' },
+            'E': { left: '38%', top: '80%' },
+            'F': { left: '75%', top: '80%' }
+        };
+
+        function shuffle(items) {
+            return [...items].sort(() => Math.random() - 0.5);
+        }
+
+        function createRandomGraph() {
+            // Keep the first branch on the left (A → B); the rest of the tree stays random.
+            const order = ['B', ...shuffle(['C', 'D', 'E']), 'F'];
+            const adjacency = Object.fromEntries(['A', 'B', 'C', 'D', 'E', 'F'].map(node => [node, []]));
+            const edges = [];
+            const addEdge = (from, to, cost) => {
+                const edge = { id: `edge-${edges.length}`, from, node: to, cost };
+                edges.push(edge);
+                adjacency[from].push(edge);
+            };
+            const availableParents = ['A'];
+
+            order.forEach(child => {
+                const parent = availableParents[Math.floor(Math.random() * availableParents.length)];
+                addEdge(parent, child, 1 + Math.floor(Math.random() * 9));
+                availableParents.push(child);
+            });
+            // Extra forward arcs create competing routes, making UCS meaningfully different from BFS.
+            const rankedNodes = ['A', ...order];
+            const candidates = [];
+            rankedNodes.forEach((from, fromIndex) => rankedNodes.slice(fromIndex + 1).forEach(to => {
+                if (!adjacency[from].some(edge => edge.node === to)) candidates.push({ from, to });
+            }));
+            shuffle(candidates).slice(0, 2).forEach(({ from, to }) => addEdge(from, to, 1 + Math.floor(Math.random() * 9)));
+            // DFS and BFS read neighbors from left to right on the diagram.
+            Object.values(adjacency).forEach(neighbors => neighbors.sort((a, b) =>
+                parseFloat(nodePositions[a.node].left) - parseFloat(nodePositions[b.node].left)
+            ));
+            exerciseGraph = { adjacency, edges };
+            renderGraph();
+        }
+
+        function renderGraph() {
+            const svg = document.getElementById('graph-svg');
+            const lines = [];
+            exerciseGraph.edges.forEach(({ id, from, node: to, cost }) => {
+                    const start = nodePositions[from];
+                    const end = nodePositions[to];
+                    const x = (parseFloat(start.left) + parseFloat(end.left)) / 2;
+                    const y = (parseFloat(start.top) + parseFloat(end.top)) / 2;
+                    lines.push(`<line id="${id}" class="graph-edge" x1="${start.left}" y1="${start.top}" x2="${end.left}" y2="${end.top}" stroke="#1e293b" stroke-width="3" stroke-dasharray="5 5"></line>`);
+                    lines.push(`<text x="${x}%" y="${y}%" fill="#94a3b8" font-size="12" text-anchor="middle" dy="-6">${cost}</text>`);
+            });
+            svg.innerHTML = lines.join('');
+        }
+
+        function createDynamicExercise() {
+            const { adjacency } = exerciseGraph;
+            const steps = [];
+            const answerRows = [];
+            const addStep = (node, structure, visited, highlight, via) => {
+                const edgeGlows = via ? [via] : [];
+                steps.push({ node, struct: structure, visited: [...visited], highlight, edgeGlows });
+                answerRows.push({ visit: node, struct: structure.join(','), visited: visited.join(',') });
+            };
+
+            if (currentAlgo === 'DFS') {
+                const stack = [{ node: 'A', via: null }]; const visited = []; const discovered = new Set(['A']);
+                steps.push({ node: '-', struct: ['A'], visited: [], highlight: 1, edgeGlows: [] });
+                while (stack.length) {
+                    const current = stack.pop(); visited.push(current.node);
+                    [...adjacency[current.node]].reverse().forEach(edge => {
+                        if (!discovered.has(edge.node)) { discovered.add(edge.node); stack.push({ node: edge.node, via: edge.id }); }
+                    });
+                    addStep(current.node, stack.map(item => item.node), visited, 4, current.via);
+                    if (current.node === 'F') break;
+                }
+            } else if (currentAlgo === 'BFS') {
+                const queue = [{ node: 'A', via: null }]; const visited = []; const discovered = new Set(['A']);
+                steps.push({ node: '-', struct: ['A'], visited: [], highlight: 1, edgeGlows: [] });
+                while (queue.length) {
+                    const current = queue.shift(); visited.push(current.node);
+                    adjacency[current.node].forEach(edge => {
+                        if (!discovered.has(edge.node)) { discovered.add(edge.node); queue.push({ node: edge.node, via: edge.id }); }
+                    });
+                    addStep(current.node, queue.map(item => item.node), visited, 4, current.via);
+                    if (current.node === 'F') break;
+                }
+            } else {
+                const frontier = [{ node: 'A', cost: 0, order: 0, via: null }]; const visited = []; const bestCost = { A: 0 }; let order = 1;
+                steps.push({ node: '-', struct: ['A:0'], visited: [], highlight: 1, edgeGlows: [] });
+                while (frontier.length) {
+                    frontier.sort((a, b) => a.cost - b.cost || a.order - b.order);
+                    const current = frontier.shift();
+                    if (current.cost !== bestCost[current.node]) continue; // discard stale higher-cost entry
+                    visited.push(current.node);
+                    adjacency[current.node].forEach(edge => {
+                        const nextCost = current.cost + edge.cost;
+                        if (nextCost < (bestCost[edge.node] ?? Infinity)) {
+                            bestCost[edge.node] = nextCost;
+                            frontier.push({ node: edge.node, cost: nextCost, order: order++, via: edge.id });
+                        }
+                    });
+                    const structure = [...frontier].sort((a, b) => a.cost - b.cost || a.order - b.order).map(item => `${item.node}:${item.cost}`);
+                    addStep(current.node, structure, visited, 9, current.via);
+                    if (current.node === 'F') break;
+                }
+            }
+            activeSimulationSteps = steps;
+            activeQuizAnswers = answerRows;
+        }
+
+        // Initialization
+        function init() {
+            document.querySelector('main').before(document.getElementById('student-challenge'));
+            buildLevelSelector();
+            createRandomGraph();
+            enableCodeIndentation();
+            setAlgorithm('DFS');
+        }
+
+        function enableCodeIndentation() {
+            const editor = document.getElementById('code-editor');
+            editor.addEventListener('keydown', event => {
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                if (event.key === 'Tab') {
+                    event.preventDefault();
+                    editor.setRangeText('    ', start, end, 'end');
+                }
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const lineStart = editor.value.lastIndexOf('\n', start - 1) + 1;
+                    const indentation = editor.value.slice(lineStart, start).match(/^\s*/)[0];
+                    editor.setRangeText(`\n${indentation}`, start, end, 'end');
+                }
+            });
+        }
+
+        function buildLevelSelector() {
+            const selector = document.getElementById('level-select');
+            selector.innerHTML = Array.from({ length: 50 }, (_, index) =>
+                `<option value="${index + 1}">Level ${index + 1}</option>`
+            ).join('');
+        }
+
+        function setLevel(level) {
+            currentLevel = Number(level);
+            createRandomGraph();
+            const algorithms = ['DFS', 'BFS', 'UCS'];
+            let nextAlgorithm = algorithms[Math.floor(Math.random() * algorithms.length)];
+            // A new level must show a different search strategy from the one just completed.
+            if (nextAlgorithm === currentAlgo) {
+                const currentIndex = algorithms.indexOf(currentAlgo);
+                nextAlgorithm = algorithms[(currentIndex + 1 + Math.floor(Math.random() * 2)) % algorithms.length];
+            }
+            setAlgorithm(nextAlgorithm);
+        }
+
+        function setAlgorithm(algo) {
+            currentAlgo = algo;
+            simulationStep = 0;
+            isPlaying = false;
+            clearInterval(playInterval);
+            createDynamicExercise();
+            
+
+            // Button Toggle styling
+            const btnDfs = document.getElementById('btn-dfs');
+            const btnBfs = document.getElementById('btn-bfs');
+            const btnUcs = document.getElementById('btn-ucs');
+            const inactive = 'px-4 py-2 rounded-md text-sm font-semibold text-slate-400 hover:text-white transition-all duration-300';
+            const active = 'px-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 bg-spidey-red text-white shadow-[0_0_10px_rgba(229,62,62,0.4)]';
+            btnDfs.className = algo === 'DFS' ? active : inactive;
+            btnBfs.className = algo === 'BFS' ? active : inactive;
+            btnUcs.className = algo === 'UCS' ? active : inactive;
+
+            const labels = {
+                DFS: ['DEPTH-FIRST SEARCH (DFS)', 'Stack (LIFO)', 'Stack contents (e.g. C,B)'],
+                BFS: ['BREADTH-FIRST SEARCH (BFS)', 'Queue (FIFO)', 'Queue contents (e.g. B,C)'],
+                UCS: ['UNIFORM-COST SEARCH (UCS)', 'Priority queue (lowest cost first)', 'Priority queue contents (e.g. E:2,C:4)']
+            };
+            document.getElementById('algo-title').innerText = labels[algo][0];
+            document.getElementById('label-struct-type').innerText = labels[algo][1];
+            document.getElementById('quiz-algo-type').innerText = algo;
+            document.getElementById('quiz-th-struct').innerText = labels[algo][2];
+
+            document.getElementById('play-icon').className = 'fa-solid fa-play';
+            document.getElementById('play-text').innerText = 'Run';
+
+            renderSimulationState();
+            renderQuizTable();
+            renderPracticeChallenges();
+            loadCodingExercise();
+        }
+
+        // Change Active Language Tab (Python / C++ / C)
+        function setLanguage(lang) {
+            currentLang = lang;
+            ['python', 'cpp', 'c'].forEach(l => {
+                const btn = document.getElementById(`lang-${l}`);
+                if (l === lang) {
+                    btn.className = 'px-3 py-1 rounded text-xs font-semibold code-font bg-slate-800 text-sky-400 border border-slate-700/80';
+                } else {
+                    btn.className = 'px-3 py-1 rounded text-xs font-semibold code-font text-slate-400 hover:text-slate-300';
+                }
+            });
+            loadCodingExercise();
+        }
+
+        // The code editor is intentionally editable: students write the solution.
+        function renderCode() {
+            // Retained for simulation compatibility. The student code must not be overwritten while stepping.
+        }
+
+        const codingTaskBank = {
+            DFS: [
+                ['Write a DFS that returns whether the goal is reachable from the start node.', ['stack', 'visited']],
+                ['Implement DFS and record every node in the order it is visited.', ['stack', 'visited']],
+                ['Complete DFS so it stops and returns true when it reaches the target.', ['stack', 'target']]
+            ],
+            BFS: [
+                ['Write a BFS that returns whether the goal is reachable from the start node.', ['queue', 'visited']],
+                ['Implement BFS and record every node in the order it is visited.', ['queue', 'visited']],
+                ['Complete BFS so it stops and returns true when it reaches the target.', ['queue', 'target']]
+            ],
+            UCS: [
+                ['Write UCS using a priority queue so the least-cost node is explored first.', ['priority', 'cost']],
+                ['Implement UCS and update a node only when a lower path cost is found.', ['cost', 'frontier']],
+                ['Complete UCS so it returns the cost of the least-cost path to the target.', ['priority', 'target']]
+            ]
+        };
+
+        function levelHint() {
+            if (currentLevel <= 10) return 'Beginner: focus on the basic data structure.';
+            if (currentLevel <= 25) return 'Intermediate: avoid revisiting nodes.';
+            if (currentLevel <= 40) return 'Advanced: handle all neighbors correctly.';
+            return 'Expert: write a complete, clean solution.';
+        }
+
+        function currentGraphDescription() {
+            return Object.entries(exerciseGraph.adjacency)
+                .filter(([, neighbors]) => neighbors.length)
+                .map(([from, neighbors]) => `${from} → ${neighbors.map(edge => `${edge.node} (${edge.cost})`).join(', ')}`)
+                .join(' | ');
+        }
+
+        function starterCode() {
+            const name = currentAlgo.toLowerCase();
+            const graphNote = currentGraphDescription();
+            if (currentLang === 'python') return `# Current graph: ${graphNote}\n# Start: A | Goal: F\n\ndef ${name}(graph, start, target):\n    # Write your solution here\n    pass`;
+            if (currentLang === 'cpp') return `// Current graph: ${graphNote}\n// Start: A | Goal: F\nbool ${name}(const Graph& graph, char start, char target) {\n    // Write your solution here\n}`;
+            return `/* Current graph: ${graphNote}\n   Start: A | Goal: F */\nvoid ${name}(int graph[][MAX_NODES], int start, int target) {\n    /* Write your solution here */\n}`;
+        }
+
+        function loadCodingExercise() {
+            const tasks = codingTaskBank[currentAlgo];
+            currentCodingTask = tasks[Math.floor(Math.random() * tasks.length)];
+            document.getElementById('coding-question-title').innerText = `Question 4: Level ${currentLevel} coding exercise`;
+            document.getElementById('coding-question').innerText = `${currentCodingTask[0]} Use the exact graph shown above: ${currentGraphDescription()}. Start at A and use F as the goal. ${levelHint()}`;
+            document.getElementById('code-editor').value = starterCode();
+            document.getElementById('code-status').innerText = 'Complete the code, then check all answers.';
+            document.getElementById('code-status').className = 'text-sm text-slate-400 mr-auto';
+        }
+
+        function validateCode() {
+            const solution = document.getElementById('code-editor').value.toLowerCase();
+            const isComplete = solution.length > 80 && currentCodingTask[1].every(keyword => solution.includes(keyword));
+            const status = document.getElementById('code-status');
+            if (isComplete) {
+                status.innerText = 'Code looks complete.';
+                status.className = 'text-sm text-emerald-400 mr-auto';
+            } else {
+                status.innerText = `Keep working: include ${currentCodingTask[1].join(' and ')} in your solution.`;
+                status.className = 'text-sm text-red-400 mr-auto';
+            }
+            return isComplete;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // Render graphical and state representation of current simulation step
+        function renderSimulationState() {
+            const stepData = activeSimulationSteps[simulationStep];
+
+            // 1. Update Monitor state UI
+            document.getElementById('state-current-node').innerText = stepData.node;
+            document.getElementById('state-structure').innerText = `[${stepData.struct.join(', ')}]`;
+            document.getElementById('state-visited').innerText = `[${stepData.visited.join(', ')}]`;
+
+            // 2. Update Spider Token Position
+            const spidey = document.getElementById('spidey-token');
+            if (stepData.node === '-') {
+                spidey.style.opacity = '0';
+            } else {
+                spidey.style.opacity = '1';
+                const pos = nodePositions[stepData.node];
+                spidey.style.left = pos.left;
+                spidey.style.top = pos.top;
+            }
+
+            // 3. Reset all nodes & edges visual classes
+            ['A', 'B', 'C', 'D', 'E', 'F'].forEach(nodeId => {
+                const nodeEl = document.getElementById(`node-${nodeId}`);
+                nodeEl.className = 'absolute -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full border-2 flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10';
+                
+                // Adjust sizes for root/target
+                if (nodeId === 'A' || nodeId === 'F') {
+                    nodeEl.classList.add('w-14', 'h-14');
+                }
+
+                // Check node state
+                if (stepData.node === nodeId) {
+                    // Node is currently active (where Spider-man is)
+                    nodeEl.classList.add('bg-spidey-red', 'text-white', 'border-white', 'shadow-[0_0_20px_#E53E3E]');
+                } else if (stepData.visited.includes(nodeId)) {
+                    // Node has already been visited
+                    nodeEl.classList.add('bg-emerald-950/80', 'text-emerald-400', 'border-emerald-500/80', 'shadow-[0_0_10px_rgba(16,185,129,0.3)]');
+                } else if (stepData.struct.some(entry => entry.split(':')[0] === nodeId)) {
+                    // Node is in stack or queue
+                    nodeEl.classList.add('bg-sky-950/80', 'text-sky-400', 'border-sky-500/80');
+                } else {
+                    // Unvisited and inactive
+                    nodeEl.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-600');
+                }
+            });
+
+            // Make sure Node coordinates match properly
+            document.getElementById('node-A').style.left = '50%'; document.getElementById('node-A').style.top = '20%';
+            document.getElementById('node-B').style.left = '25%'; document.getElementById('node-B').style.top = '50%';
+            document.getElementById('node-C').style.left = '75%'; document.getElementById('node-C').style.top = '50%';
+            document.getElementById('node-D').style.left = '12%'; document.getElementById('node-D').style.top = '80%';
+            document.getElementById('node-E').style.left = '38%'; document.getElementById('node-E').style.top = '80%';
+            document.getElementById('node-F').style.left = '75%'; document.getElementById('node-F').style.top = '80%';
+
+            // 4. Update edges glows
+            document.querySelectorAll('.graph-edge').forEach(edgeEl => {
+                if (stepData.edgeGlows.includes(edgeEl.id)) {
+                    edgeEl.setAttribute('stroke', '#FF4D4D');
+                    edgeEl.setAttribute('stroke-width', '4');
+                    edgeEl.removeAttribute('stroke-dasharray');
+                    edgeEl.style.filter = 'drop-shadow(0 0 5px #FF4D4D)';
+                } else {
+                    edgeEl.setAttribute('stroke', '#1e293b');
+                    edgeEl.setAttribute('stroke-width', '3');
+                    edgeEl.setAttribute('stroke-dasharray', '5 5');
+                    edgeEl.style.filter = 'none';
+                }
+            });
+
+            // 5. Update Code highlight
+            renderCode();
+        }
+
+        // Controls Logic
+        function nextStep() {
+            const steps = activeSimulationSteps;
+            if (simulationStep < steps.length - 1) {
+                simulationStep++;
+                renderSimulationState();
+            } else {
+                // Done simulation
+                if (isPlaying) togglePlay();
+            }
+        }
+
+        function prevStep() {
+            if (simulationStep > 0) {
+                simulationStep--;
+                renderSimulationState();
+            }
+        }
+
+        function resetSimulation() {
+            simulationStep = 0;
+            renderSimulationState();
+            if (isPlaying) togglePlay();
+        }
+
+        function togglePlay() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('btn-play');
+            const icon = document.getElementById('play-icon');
+            const text = document.getElementById('play-text');
+
+            if (isPlaying) {
+                icon.className = 'fa-solid fa-pause';
+                text.innerText = 'Pause';
+                playInterval = setInterval(() => {
+                    const steps = activeSimulationSteps;
+                    if (simulationStep < steps.length - 1) {
+                        nextStep();
+                    } else {
+                        resetSimulation();
+                    }
+                }, 1800);
+            } else {
+                icon.className = 'fa-solid fa-play';
+                text.innerText = 'Run';
+                clearInterval(playInterval);
+            }
+        }
+
+        // Renders student quiz section
+        function renderQuizTable() {
+            const tbody = document.getElementById('quiz-tbody');
+            tbody.innerHTML = '';
+            
+            const count = activeQuizAnswers.length;
+            for (let i = 0; i < count; i++) {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b border-slate-900 hover:bg-slate-800/20 transition';
+                
+                tr.innerHTML = `
+                    <td class="py-4 px-4 font-mono text-slate-500 font-bold">${i + 1}</td>
+                    <td class="py-4 px-4">
+                        <input type="text" id="quiz-visit-${i}" class="bg-slate-950 border border-slate-800 rounded px-2 py-1 w-12 font-bold text-center text-spidey-redGlow uppercase" placeholder="?">
+                    </td>
+                    <td class="py-4 px-4">
+                        <input type="text" id="quiz-struct-${i}" class="bg-slate-950 border border-slate-800 rounded px-3 py-1 w-full max-w-[200px] code-font text-sky-400 uppercase" placeholder="ex: C,B">
+                    </td>
+                    <td class="py-4 px-4">
+                        <input type="text" id="quiz-visited-${i}" class="bg-slate-950 border border-slate-800 rounded px-3 py-1 w-full max-w-[250px] code-font text-emerald-400 uppercase" placeholder="ex: A,B">
+                    </td>
+                    <td class="py-4 px-4 text-right" id="quiz-status-${i}">
+                        <span class="text-slate-600 text-xs italic">Not checked</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        // Validate student solutions
+        function validateQuiz() {
+            const correctSet = activeQuizAnswers;
+            let allCorrect = true;
+
+            correctSet.forEach((correct, idx) => {
+                const inputVisit = document.getElementById(`quiz-visit-${idx}`).value.trim().toUpperCase();
+                const inputStruct = document.getElementById(`quiz-struct-${idx}`).value.trim().replace(/\s+/g, '').toUpperCase();
+                const inputVisited = document.getElementById(`quiz-visited-${idx}`).value.trim().replace(/\s+/g, '').toUpperCase();
+
+                const cleanCorrectStruct = correct.struct.replace(/\s+/g, '').toUpperCase();
+                const cleanCorrectVisited = correct.visited.replace(/\s+/g, '').toUpperCase();
+
+                const isVisitOk = inputVisit === correct.visit;
+                const isStructOk = inputStruct === cleanCorrectStruct;
+                const isVisitedOk = inputVisited === cleanCorrectVisited;
+
+                const statusCell = document.getElementById(`quiz-status-${idx}`);
+
+                if (isVisitOk && isStructOk && isVisitedOk) {
+                    statusCell.innerHTML = '<span class="text-emerald-500 font-bold text-sm"><i class="fa-solid fa-circle-check"></i> Correct</span>';
+                } else {
+                    statusCell.innerHTML = '<span class="text-red-500 font-bold text-sm" title="One or more entries are incorrect"><i class="fa-solid fa-circle-xmark"></i> Incorrect</span>';
+                    allCorrect = false;
+                }
+            });
+
+            return allCorrect;
+        }
+
+        const practiceQuestionBank = [
+            'Which data structure does DFS use, and what is its removal order?',
+            'Which data structure does BFS use, and what is its removal order?',
+            'Why can UCS find a lower-cost path than BFS on a weighted graph?',
+            'Starting at A, which node does DFS visit immediately after B on this graph?',
+            'Starting at A, which node does BFS visit immediately after B on this graph?',
+            'For UCS, what does the number after a colon in E:2 represent?',
+            'What is the time complexity of DFS and BFS with an adjacency list?',
+            'Why does UCS always remove the lowest-cost frontier entry first?'
+        ];
+
+        function renderPracticeChallenges() {
+            const container = document.getElementById('practice-challenges');
+            if (!container) return;
+            const questions = [...practiceQuestionBank].sort(() => Math.random() - 0.5).slice(0, 2);
+            container.innerHTML = questions.map((question, index) => `
+                <article class="bg-slate-950/70 border border-slate-800 rounded-lg p-4">
+                    <h3 class="text-xs uppercase tracking-wider font-bold text-spidey-redGlow mb-2">Question ${index + 1}</h3>
+                    <p class="text-sm text-slate-200">${question}</p>
+                    <input aria-label="Answer to question ${index + 1}" type="text" class="practice-answer mt-3 bg-slate-900 border border-slate-700 rounded px-3 py-2 w-full text-sm text-slate-100" placeholder="Write your answer">
+                </article>
+            `).join('');
+        }
+
+        function resetQuiz() {
+            renderQuizTable();
+        }
+
+        function resetExercise() {
+            resetQuiz();
+            loadCodingExercise();
+            document.querySelectorAll('.practice-answer').forEach(input => input.value = '');
+        }
+
+        function validateAllAnswers() {
+            const traceIsCorrect = validateQuiz();
+            const codeIsComplete = validateCode();
+            const writtenAreComplete = [...document.querySelectorAll('.practice-answer')].every(input => input.value.trim().length > 0);
+            if (traceIsCorrect && codeIsComplete && writtenAreComplete) {
+                alert(`🏆 Level ${currentLevel} complete! Great job.`);
+            } else if (!writtenAreComplete) {
+                alert('Please answer both written questions before checking your work.');
+            } else {
+                alert('Some answers still need work. Review the trace table and code feedback, then try again.');
+            }
+        }
+
+        // Run application on start
+        window.onload = init;
+    </script>
+</body>
+</html>
