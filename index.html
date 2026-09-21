@@ -43,7 +43,7 @@
     </style>
 </head>
 <body class="bg-spidey-darkBg text-slate-100 min-h-screen flex flex-col spider-web antialiased">
- 
+
     <!-- Header -->
     <header class="border-b border-spidey-red/20 bg-spidey-darkBg/90 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="flex items-center gap-3">
@@ -77,7 +77,7 @@
             <span id="score-badge" class="px-2 py-1 rounded bg-slate-800 border border-slate-700 text-emerald-400 font-semibold">0/50</span>
         </div>
     </header>
- 
+
     <!-- Main Workspace -->
     <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
         
@@ -94,7 +94,7 @@
                         DEPTH-FIRST SEARCH (DFS)
                     </span>
                 </div>
- 
+
                 <!-- Web Interactive Canvas / SVG -->
                 <div class="h-[300px] flex items-center justify-center relative bg-slate-950/60 rounded-lg border border-slate-800/80 overflow-hidden">
                     <!-- Grid background -->
@@ -109,38 +109,38 @@
                         <line id="edge-BE" x1="25%" y1="50%" x2="38%" y2="80%" stroke="#1e293b" stroke-width="3" stroke-dasharray="5 5"></line>
                         <line id="edge-CF" x1="75%" y1="50%" x2="75%" y2="80%" stroke="#1e293b" stroke-width="3" stroke-dasharray="5 5"></line>
                     </svg>
- 
+
                     <!-- HTML Layer Nodes (Positioned absolutely corresponding to SVGs) -->
                     <!-- Node A (Root) -->
                     <div id="node-A" class="absolute left-1/2 -translate-x-1/2 top-[10%] w-14 h-14 rounded-full bg-slate-800 border-2 border-slate-600 flex flex-col items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
                         A <span class="text-[9px] text-slate-400 font-normal">Start</span>
                     </div>
- 
+
                     <!-- Node B -->
                     <div id="node-B" class="absolute left-[25%] -translate-x-1/2 top-[42%] w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
                         B
                     </div>
- 
+
                     <!-- Node C -->
                     <div id="node-C" class="absolute left-[75%] -translate-x-1/2 top-[42%] w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
                         C
                     </div>
- 
+
                     <!-- Node D -->
                     <div id="node-D" class="absolute left-[12%] -translate-x-1/2 top-[72%] w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
                         D
                     </div>
- 
+
                     <!-- Node E -->
                     <div id="node-E" class="absolute left-[38%] -translate-x-1/2 top-[72%] w-12 h-12 rounded-full bg-slate-800 border-2 border-slate-600 flex items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
                         E
                     </div>
- 
+
                     <!-- Node F -->
                     <div id="node-F" class="absolute left-[75%] -translate-x-1/2 top-[72%] w-14 h-14 rounded-full bg-slate-800 border-2 border-slate-600 flex flex-col items-center justify-center font-bold text-lg shadow-lg transition-all duration-500 z-10">
                         F <span class="text-[9px] text-slate-400 font-normal">Goal</span>
                     </div>
- 
+
                     <!-- Hanging Spider Animation / Active Indicator -->
                     <div id="spidey-token" class="absolute left-[50%] top-[20%] -translate-x-1/2 -translate-y-1/2 transition-all duration-500 z-20 pointer-events-none opacity-0">
                         <div class="relative w-10 h-10 flex items-center justify-center bg-spidey-red rounded-full border border-white animate-bounce shadow-[0_0_15px_#FF4D4D]">
@@ -148,7 +148,7 @@
                         </div>
                     </div>
                 </div>
- 
+
                 <!-- Simulation Controls -->
                 <div class="flex justify-center items-center gap-4 mt-4">
                     <button onclick="prevStep()" class="w-10 h-10 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center transition">
@@ -165,7 +165,7 @@
                     </button>
                 </div>
             </div>
- 
+
             <!-- State Monitor Card (Console Log) -->
             <div class="bg-spidey-cardBg rounded-xl border border-slate-800 p-6 shadow-xl">
                 <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
@@ -190,7 +190,7 @@
                 </div>
             </div>
         </section>
- 
+
         <!-- Right Column: Code IDE with language selector (5/12) -->
         <section class="lg:col-span-5 flex flex-col gap-6">
             
@@ -213,7 +213,7 @@
                         </button>
                     </div>
                 </div>
- 
+
                 <div class="px-4 pt-4">
                     <h3 id="coding-question-title" class="text-sm font-bold text-spidey-redGlow">Coding question</h3>
                     <p id="coding-question" class="mt-1 text-sm text-slate-300"></p>
@@ -221,15 +221,16 @@
                 <div class="p-4 flex-1 overflow-y-auto text-sm code-font min-h-[350px] bg-slate-950 relative">
                     <textarea id="code-editor" spellcheck="false" aria-label="Write your code here" class="w-full h-full min-h-[330px] resize-y bg-slate-950 text-slate-200 border border-slate-800 rounded-lg p-4 leading-relaxed focus:outline-none focus:border-spidey-blueLight" placeholder="Write your solution here"></textarea>
                 </div>
-                <div class="px-4 pb-4 flex flex-wrap justify-end items-center gap-3">
+                <div class="px-4 pb-2 flex flex-wrap justify-end items-center gap-3">
                     <span id="code-status" class="text-sm text-slate-400 mr-auto">Complete the code, then click Run above to test it.</span>
                     <button onclick="resetExercise()" class="px-5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-sm transition">Reset exercise</button>
                     <button onclick="validateAllAnswers()" class="px-6 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-950 transition">Check my answers</button>
                 </div>
+                <div id="results-summary" class="px-4 pb-4 space-y-2"></div>
             </div>
         </section>
     </main>
- 
+
     <!-- Interactive Challenge / Student Quiz Section -->
     <section id="student-challenge" class="max-w-7xl w-full mx-auto p-4 md:p-6 mt-2 border-t border-slate-800 flex-none">
         <div class="bg-spidey-cardBg rounded-xl border border-slate-800 p-6 shadow-2xl">
@@ -243,7 +244,7 @@
             <p class="text-sm text-slate-400 mb-6">
                 This table is synced to the tree: write your <span id="quiz-algo-type" class="font-semibold text-spidey-red">DFS</span> code in Question 4 below and click Run - every row here should match a move the spider actually makes. The first explored node is <strong class="text-slate-200">A</strong>.
             </p>
- 
+
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm border-collapse">
                     <thead>
@@ -260,15 +261,15 @@
                     </tbody>
                 </table>
             </div>
- 
+
         </div>
     </section>
- 
+
     <!-- Footer -->
     <footer class="text-center py-6 text-xs text-slate-500 mt-auto border-t border-slate-900 bg-slate-950/40">
         Built for programming students • Inspired by Spider-Man and Algomaster
     </footer>
- 
+
     <!-- Logic Script -->
     <script>
         // Global State variables
@@ -281,12 +282,12 @@
         let simulationStep = 0;
         let isPlaying = false;
         let playInterval = null;
- 
+
         // These are regenerated from a fresh graph for every level.
         let exerciseGraph;
         let activeSimulationSteps = [];
         let activeQuizAnswers = [];
- 
+
         // Nodes coordinates on the page (center points to position Spider Token)
         const nodePositions = {
             'A': { left: '50%', top: '20%' },
@@ -296,11 +297,11 @@
             'E': { left: '38%', top: '80%' },
             'F': { left: '75%', top: '80%' }
         };
- 
+
         function shuffle(items) {
             return [...items].sort(() => Math.random() - 0.5);
         }
- 
+
         function createRandomGraph() {
             // Keep the first branch on the left (A → B); the rest of the tree stays random.
             const order = ['B', ...shuffle(['C', 'D', 'E']), 'F'];
@@ -312,7 +313,7 @@
                 adjacency[from].push(edge);
             };
             const availableParents = ['A'];
- 
+
             order.forEach(child => {
                 const parent = availableParents[Math.floor(Math.random() * availableParents.length)];
                 addEdge(parent, child, 1 + Math.floor(Math.random() * 9));
@@ -332,7 +333,7 @@
             exerciseGraph = { adjacency, edges };
             renderGraph();
         }
- 
+
         function renderGraph() {
             const svg = document.getElementById('graph-svg');
             const lines = [];
@@ -346,7 +347,7 @@
             });
             svg.innerHTML = lines.join('');
         }
- 
+
         /* ============================================================================
          * STUDENT CODE EXECUTION ENGINE
          * ----------------------------------------------------------------------------
@@ -363,22 +364,22 @@
          *     declared type instead.
          *   - name the node removed from it each loop `current`.
          * ============================================================================ */
- 
+
         const NODE_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
         const START_NODE = 'A';
         const GOAL_NODE = 'F';
         const MAX_TRACE_STEPS = 60; // generous for a 6-node graph, but keeps a buggy infinite loop from producing a huge table
- 
+
         function idleSteps() {
             return [{ node: '-', struct: currentAlgo === 'UCS' ? [`${START_NODE}:0`] : [START_NODE], visited: [], edgeGlows: [] }];
         }
- 
+
         function resetToIdleSimulation() {
             activeSimulationSteps = idleSteps();
             activeQuizAnswers = [];
             simulationStep = 0;
         }
- 
+
         // ---- generic helpers ----
         function nodeLetterFromRaw(raw, forC) {
             if (forC) return (typeof raw === 'number' && raw >= 0 && raw < NODE_LETTERS.length) ? NODE_LETTERS[raw] : null;
@@ -392,14 +393,14 @@
             }
             return null;
         }
- 
+
         function costFromRaw(raw) {
             if (typeof raw === 'number') return raw;
             if (Array.isArray(raw)) { for (const item of raw) if (typeof item === 'number') return item; return null; }
             if (raw && typeof raw === 'object') { for (const key of Object.keys(raw)) if (typeof raw[key] === 'number') return raw[key]; }
             return null;
         }
- 
+
         function formatStructEntries(containerArr, forC) {
             return containerArr.filter(x => x !== undefined).map(item => {
                 const letter = nodeLetterFromRaw(item, forC);
@@ -409,7 +410,7 @@
                 return cost !== null ? `${letter}:${cost}` : letter;
             });
         }
- 
+
         function splitTopLevel(str, sep) {
             const parts = [];
             let depth = 0, current = '';
@@ -421,7 +422,7 @@
             parts.push(current);
             return parts;
         }
- 
+
         function buildRuntimeGraph(forC) {
             const { edges } = exerciseGraph;
             if (forC) {
@@ -443,7 +444,7 @@
             }
             return graph;
         }
- 
+
         // ---- Python -> JS ----
         function pyExpr(expr) {
             let s = expr;
@@ -476,18 +477,18 @@
             });
             return s;
         }
- 
+
         function pyCondition(cond) {
             const trimmed = cond.trim();
             return /^\w+$/.test(trimmed) ? `${trimmed}.length` : pyExpr(trimmed);
         }
- 
+
         function pyIterable(expr) {
             const trimmed = expr.trim();
             const m = trimmed.match(/^reversed\((.+)\)$/);
             return m ? `__reversed(${pyExpr(m[1])})` : pyExpr(trimmed);
         }
- 
+
         function transpilePythonLine(content, declared) {
             let m;
             if ((m = content.match(/^def\s+(\w+)\s*\(([^)]*)\)\s*:$/))) {
@@ -523,7 +524,7 @@
             }
             return pyExpr(content) + ';';
         }
- 
+
         function transpilePython(source) {
             const rawLines = source.replace(/\r/g, '').split('\n').map(l => l.replace(/\t/g, '    '));
             const cleaned = [];
@@ -554,7 +555,7 @@
             while (indentStack.length > 1) { indentStack.pop(); jsLines.push('}'); }
             return jsLines.join('\n');
         }
- 
+
         // ---- C++ -> JS ----
         function stripTemplateDecl(line, containerKinds) {
             const keywords = [
@@ -578,7 +579,7 @@
             }
             return null;
         }
- 
+
         function transpileCpp(source, containerKinds) {
             let lines = source.replace(/\r/g, '').split('\n').filter(l => !/^\s*#include/.test(l) && !/^\s*using\s+namespace/.test(l));
             const stripped = [];
@@ -624,7 +625,7 @@
             text = text.replace(/([(,]\s*)\{\s*([^{}]+?)\s*\}(?=\s*[,)])/g, (m, pre, inner) => `${pre}[${inner}]`);
             return text;
         }
- 
+
         // ---- C -> JS (already very close to JS: raw arrays + manual indices) ----
         function transpileC(source) {
             let lines = source.replace(/\r/g, '').split('\n').filter(l => !/^\s*#include/.test(l) && !/^\s*#define/.test(l));
@@ -646,7 +647,7 @@
             text = text.replace(/\bNULL\b/g, 'null');
             return text;
         }
- 
+
         // Insert a `__snapshot(current, ...)` call right after every place the
         // student's code assigns to a variable named `current`.
         function instrumentCurrentAssignments(jsBody, extraArgsExpr) {
@@ -657,16 +658,16 @@
                 (m, pre, decl, rest) => `${pre}${decl || ''}current${rest} __snapshot(current${extraArgsExpr});`);
             return text;
         }
- 
+
         function frontierArgListFor(forC) {
             if (!forC) return null; // resolved per-language below
             if (currentAlgo === 'DFS') return ', stack, () => top';
             if (currentAlgo === 'BFS') return ', queue, () => front, () => rear';
             return ', frontier, () => frontierSize';
         }
- 
+
         function resolveMaybeThunk(v) { return typeof v === 'function' ? v() : v; }
- 
+
         // Runs the student's Question 4 code for real and produces a step trace.
         // Returns { success, trace: { steps, reachedGoal }, error, warning }.
         function runStudentCode() {
@@ -681,7 +682,7 @@
             } catch (e) {
                 return { success: false, error: `Could not read your code (${e.message}).` };
             }
- 
+
             let extraArgsExpr;
             if (forC) {
                 extraArgsExpr = frontierArgListFor(true);
@@ -691,19 +692,19 @@
             } else {
                 extraArgsExpr = `, ${currentAlgo === 'DFS' ? 'stack' : currentAlgo === 'BFS' ? 'queue' : 'frontier'}`;
             }
- 
+
             let instrumented;
             try {
                 instrumented = instrumentCurrentAssignments(jsBody, extraArgsExpr);
             } catch (e) {
                 return { success: false, error: `Could not prepare your code for simulation (${e.message}).` };
             }
- 
+
             let pendingSnapshot = null;
             let stepCounter = 0;
             const visitedOrder = [];
             const rawTrace = [];
- 
+
             function readContainerSlice(args) {
                 if (forC) {
                     if (currentAlgo === 'DFS') { const [arr, top] = args; return (arr || []).slice(0, resolveMaybeThunk(top) + 1); }
@@ -713,7 +714,7 @@
                 const [arr] = args;
                 return Array.from(arr || []);
             }
- 
+
             function finalizePending() {
                 const { rawCurrent, extraArgs } = pendingSnapshot;
                 const nodeId = nodeLetterFromRaw(rawCurrent, forC);
@@ -722,14 +723,14 @@
                 rawTrace.push({ node: nodeId || '?', struct: structEntries, visited: visitedOrder.slice() });
                 pendingSnapshot = null;
             }
- 
+
             function __snapshot(rawCurrent, ...extraArgs) {
                 if (pendingSnapshot) finalizePending();
                 stepCounter++;
                 if (stepCounter > MAX_TRACE_STEPS) throw new Error("this looks like an infinite loop (too many steps) - check your loop's stopping condition");
                 pendingSnapshot = { rawCurrent, extraArgs };
             }
- 
+
             function heappush(arr, item) { arr.push(item); arr.sort((a, b) => (costFromRaw(a) ?? 0) - (costFromRaw(b) ?? 0)); }
             function heappop(arr) { return arr.shift(); }
             function __pqpush(arr, item) { arr.push(item); arr.sort((a, b) => (costFromRaw(a) ?? 0) - (costFromRaw(b) ?? 0)); }
@@ -742,7 +743,7 @@
                 return false;
             }
             function __dictGet(obj, key, def) { return (obj && Object.prototype.hasOwnProperty.call(obj, key)) ? obj[key] : def; }
- 
+
             // Temporarily extend built-ins so common C++ / Python idioms work as written.
             const wasSetPatched = Set.prototype.hasOwnProperty('__eduPatched');
             const wasArrayPatched = Array.prototype.hasOwnProperty('__eduPatched');
@@ -762,12 +763,12 @@
                 Object.defineProperty(Array.prototype, 'second', { get() { return this[1]; }, configurable: true });
                 Object.defineProperty(Array.prototype, '__eduPatched', { value: true, configurable: true });
             }
- 
+
             const graph = buildRuntimeGraph(forC);
             const MAX_NODES = NODE_LETTERS.length;
             const startArg = forC ? 0 : START_NODE;
             const targetArg = forC ? NODE_LETTERS.indexOf(GOAL_NODE) : GOAL_NODE;
- 
+
             let warning = null;
             try {
                 const fnMatch = instrumented.match(/function\s+(\w+)\s*\(/);
@@ -785,16 +786,16 @@
             } finally {
                 if (pendingSnapshot) finalizePending();
             }
- 
+
             if (rawTrace.length === 0) {
                 return { success: false, error: warning ? `Your code ran into a problem: ${warning}` : "We couldn't detect any moves. Make sure the node you remove from your data structure each loop is stored in a variable named `current`." };
             }
- 
+
             let trace = rawTrace;
             const goalIndex = trace.findIndex(s => s.node === GOAL_NODE);
             const reachedGoal = goalIndex !== -1;
             if (reachedGoal) trace = trace.slice(0, goalIndex + 1);
- 
+
             const initialStruct = currentAlgo === 'UCS' ? [`${START_NODE}:0`] : [START_NODE];
             const steps = [{ node: '-', struct: initialStruct, visited: [], edgeGlows: [] }, ...trace.map(s => ({ ...s, edgeGlows: [] }))];
             for (let i = 1; i < steps.length; i++) {
@@ -803,10 +804,10 @@
                 const edge = exerciseGraph.edges.find(e => e.node === steps[i].node && fromCandidates.includes(e.from));
                 steps[i].edgeGlows = edge ? [edge.id] : [];
             }
- 
+
             return { success: true, trace: { steps, reachedGoal }, warning: reachedGoal ? null : warning };
         }
- 
+
         // Runs the student's code and applies the resulting trace to the UI.
         // Returns true if the goal was reached.
         function applyRunResult() {
@@ -836,7 +837,7 @@
             }
             return result.trace.reachedGoal;
         }
- 
+
         // Initialization
         function init() {
             document.querySelector('main').before(document.getElementById('student-challenge'));
@@ -846,7 +847,7 @@
             enableCodeIndentation();
             setAlgorithm('DFS');
         }
- 
+
         function enableCodeIndentation() {
             const editor = document.getElementById('code-editor');
             editor.addEventListener('keydown', event => {
@@ -864,19 +865,19 @@
                 }
             });
         }
- 
+
         function buildLevelSelector() {
             const selector = document.getElementById('level-select');
             selector.innerHTML = Array.from({ length: TOTAL_LEVELS }, (_, index) =>
                 `<option value="${index + 1}">Level ${index + 1}</option>`
             ).join('');
         }
- 
+
         function updateScoreBadge() {
             const badge = document.getElementById('score-badge');
             if (badge) badge.innerText = `${completedLevels.size}/${TOTAL_LEVELS}`;
         }
- 
+
         function setLevel(level) {
             currentLevel = Number(level);
             createRandomGraph();
@@ -889,13 +890,13 @@
             }
             setAlgorithm(nextAlgorithm);
         }
- 
+
         function setAlgorithm(algo) {
             currentAlgo = algo;
             isPlaying = false;
             clearInterval(playInterval);
             resetToIdleSimulation();
- 
+
             // Button Toggle styling
             const btnDfs = document.getElementById('btn-dfs');
             const btnBfs = document.getElementById('btn-bfs');
@@ -905,7 +906,7 @@
             btnDfs.className = algo === 'DFS' ? active : inactive;
             btnBfs.className = algo === 'BFS' ? active : inactive;
             btnUcs.className = algo === 'UCS' ? active : inactive;
- 
+
             const labels = {
                 DFS: ['DEPTH-FIRST SEARCH (DFS)', 'Stack (LIFO)', 'Stack contents (e.g. C,B)'],
                 BFS: ['BREADTH-FIRST SEARCH (BFS)', 'Queue (FIFO)', 'Queue contents (e.g. B,C)'],
@@ -915,16 +916,18 @@
             document.getElementById('label-struct-type').innerText = labels[algo][1];
             document.getElementById('quiz-algo-type').innerText = algo;
             document.getElementById('quiz-th-struct').innerText = labels[algo][2];
- 
+
             document.getElementById('play-icon').className = 'fa-solid fa-play';
             document.getElementById('play-text').innerText = 'Run';
- 
+
             renderSimulationState();
             renderQuizTable();
             renderPracticeChallenges();
             loadCodingExercise();
+            const summaryEl = document.getElementById('results-summary');
+            if (summaryEl) summaryEl.innerHTML = '';
         }
- 
+
         // Change Active Language Tab (Python / C++ / C)
         function setLanguage(lang) {
             currentLang = lang;
@@ -938,12 +941,12 @@
             });
             loadCodingExercise();
         }
- 
+
         // The code editor is intentionally editable: students write the solution.
         function renderCode() {
             // Retained for simulation compatibility. The student code must not be overwritten while stepping.
         }
- 
+
         const codingTaskBank = {
             DFS: [
                 'Finish the DFS below so it returns whether the goal is reachable from the start node.',
@@ -961,21 +964,21 @@
                 'Finish the UCS below so it returns the cost of the least-cost path to the target.'
             ]
         };
- 
+
         function levelHint() {
             if (currentLevel <= 10) return 'Beginner tip: focus on the goal check and the visited check first.';
             if (currentLevel <= 25) return 'Intermediate tip: make sure you never push/enqueue an already-visited node.';
             if (currentLevel <= 40) return 'Advanced tip: double-check every neighbor is handled, not just the first one.';
             return 'Expert tip: aim for a clean, complete solution with no wasted work.';
         }
- 
+
         function currentGraphDescription() {
             return Object.entries(exerciseGraph.adjacency)
                 .filter(([, neighbors]) => neighbors.length)
                 .map(([from, neighbors]) => `${from} → ${neighbors.map(edge => `${edge.node} (${edge.cost})`).join(', ')}`)
                 .join(' | ');
         }
- 
+
         // The simulator needs the frontier container / current node to use specific
         // names (see the comment above runStudentCode). The starter code already
         // follows this convention so students only have to fill in the TODOs.
@@ -996,11 +999,11 @@
                 c: graphNote => `/* Current graph: ${graphNote}\n   Start: A | Goal: F\n   Nodes are numbered 0=A, 1=B, 2=C, 3=D, 4=E, 5=F\n   graph[a][b] gives the cost from a to b (0 = no edge) */\n\nvoid ucs(int start, int target) {\n    int frontier[6];\n    int frontierCost[6];\n    int frontierSize = 0;\n    frontier[frontierSize] = start;\n    frontierCost[frontierSize] = 0;\n    frontierSize++;\n    int best[6];\n    for (int i = 0; i < 6; i++) { best[i] = 999; }\n    best[start] = 0;\n    while (frontierSize > 0) {\n        /* given: find and remove the lowest-cost entry in the frontier */\n        int bestIndex = 0;\n        for (int i = 1; i < frontierSize; i++) {\n            if (frontierCost[i] < frontierCost[bestIndex]) { bestIndex = i; }\n        }\n        int current = frontier[bestIndex];\n        int cost = frontierCost[bestIndex];\n        for (int i = bestIndex; i < frontierSize - 1; i++) {\n            frontier[i] = frontier[i + 1];\n            frontierCost[i] = frontierCost[i + 1];\n        }\n        frontierSize--;\n\n        /* TODO 1: if (current == target) you found the goal (return) */\n\n        /* TODO 2: for every neighbor i (graph[current][i] != 0), compute the\n                    new cost; if it beats best[i], update best[i] and add i\n                    (with its cost) to the frontier arrays, increasing frontierSize */\n\n    }\n}`,
             },
         };
- 
+
         function starterCode() {
             return STARTER_TEMPLATES[currentAlgo][currentLang](currentGraphDescription());
         }
- 
+
         function loadCodingExercise() {
             const tasks = codingTaskBank[currentAlgo];
             currentCodingTask = tasks[Math.floor(Math.random() * tasks.length)];
@@ -1013,22 +1016,22 @@
             renderSimulationState();
             renderQuizTable();
         }
- 
+
         // Runs the student's code for real: the trace table (Question 3) is
         // checked against whatever that run actually produced.
         function validateCode() {
             return applyRunResult();
         }
- 
+
         // Render graphical and state representation of current simulation step
         function renderSimulationState() {
             const stepData = activeSimulationSteps[simulationStep];
- 
+
             // 1. Update Monitor state UI
             document.getElementById('state-current-node').innerText = stepData.node;
             document.getElementById('state-structure').innerText = `[${stepData.struct.join(', ')}]`;
             document.getElementById('state-visited').innerText = `[${stepData.visited.join(', ')}]`;
- 
+
             // 2. Update Spider Token Position
             const spidey = document.getElementById('spidey-token');
             if (stepData.node === '-') {
@@ -1039,7 +1042,7 @@
                 spidey.style.left = pos.left;
                 spidey.style.top = pos.top;
             }
- 
+
             // 3. Reset all nodes & edges visual classes
             ['A', 'B', 'C', 'D', 'E', 'F'].forEach(nodeId => {
                 const nodeEl = document.getElementById(`node-${nodeId}`);
@@ -1049,7 +1052,7 @@
                 if (nodeId === 'A' || nodeId === 'F') {
                     nodeEl.classList.add('w-14', 'h-14');
                 }
- 
+
                 // Check node state
                 if (stepData.node === nodeId) {
                     // Node is currently active (where Spider-man is)
@@ -1065,7 +1068,7 @@
                     nodeEl.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-600');
                 }
             });
- 
+
             // Make sure Node coordinates match properly
             document.getElementById('node-A').style.left = '50%'; document.getElementById('node-A').style.top = '20%';
             document.getElementById('node-B').style.left = '25%'; document.getElementById('node-B').style.top = '50%';
@@ -1073,7 +1076,7 @@
             document.getElementById('node-D').style.left = '12%'; document.getElementById('node-D').style.top = '80%';
             document.getElementById('node-E').style.left = '38%'; document.getElementById('node-E').style.top = '80%';
             document.getElementById('node-F').style.left = '75%'; document.getElementById('node-F').style.top = '80%';
- 
+
             // 4. Update edges glows
             document.querySelectorAll('.graph-edge').forEach(edgeEl => {
                 if (stepData.edgeGlows.includes(edgeEl.id)) {
@@ -1088,11 +1091,11 @@
                     edgeEl.style.filter = 'none';
                 }
             });
- 
+
             // 5. Update Code highlight
             renderCode();
         }
- 
+
         // Controls Logic
         function nextStep() {
             const steps = activeSimulationSteps;
@@ -1104,14 +1107,14 @@
                 if (isPlaying) togglePlay();
             }
         }
- 
+
         function prevStep() {
             if (simulationStep > 0) {
                 simulationStep--;
                 renderSimulationState();
             }
         }
- 
+
         // Rewinds to the start of whichever trace is currently loaded (does NOT
         // re-run the student's code - use the Run button for that).
         function resetSimulation() {
@@ -1119,14 +1122,14 @@
             renderSimulationState();
             if (isPlaying) stopPlaying();
         }
- 
+
         function stopPlaying() {
             isPlaying = false;
             clearInterval(playInterval);
             document.getElementById('play-icon').className = 'fa-solid fa-play';
             document.getElementById('play-text').innerText = 'Run';
         }
- 
+
         // The Run/Pause button. Pressing Run (re-)executes the student's Question 4
         // code and animates the resulting trace. The prev/next arrows just step
         // through whatever trace is currently loaded, without re-running anything.
@@ -1154,12 +1157,12 @@
                 }
             }, 1800);
         }
- 
+
         // Renders student quiz section
         function renderQuizTable() {
             const tbody = document.getElementById('quiz-tbody');
             tbody.innerHTML = '';
- 
+
             const count = activeQuizAnswers.length;
             if (count === 0) {
                 tbody.innerHTML = `<tr><td colspan="5" class="py-6 px-4 text-sm text-slate-500 italic">Click Run on Question 4 first - this table will fill in with one row per move your code makes.</td></tr>`;
@@ -1187,37 +1190,44 @@
                 tbody.appendChild(tr);
             }
         }
- 
-        // Validate student solutions
+
+        // Validate student solutions. Returns { allCorrect, wrongRows } where wrongRows
+        // lists which row numbers are wrong and which specific column(s) caused it.
         function validateQuiz() {
             const correctSet = activeQuizAnswers;
-            let allCorrect = true;
- 
+            let allCorrect = correctSet.length > 0;
+            const wrongRows = [];
+
             correctSet.forEach((correct, idx) => {
                 const inputVisit = document.getElementById(`quiz-visit-${idx}`).value.trim().toUpperCase();
                 const inputStruct = document.getElementById(`quiz-struct-${idx}`).value.trim().replace(/\s+/g, '').toUpperCase();
                 const inputVisited = document.getElementById(`quiz-visited-${idx}`).value.trim().replace(/\s+/g, '').toUpperCase();
- 
+
                 const cleanCorrectStruct = correct.struct.replace(/\s+/g, '').toUpperCase();
                 const cleanCorrectVisited = correct.visited.replace(/\s+/g, '').toUpperCase();
- 
+
                 const isVisitOk = inputVisit === correct.visit;
                 const isStructOk = inputStruct === cleanCorrectStruct;
                 const isVisitedOk = inputVisited === cleanCorrectVisited;
- 
+
                 const statusCell = document.getElementById(`quiz-status-${idx}`);
- 
+
                 if (isVisitOk && isStructOk && isVisitedOk) {
                     statusCell.innerHTML = '<span class="text-emerald-500 font-bold text-sm"><i class="fa-solid fa-circle-check"></i> Correct</span>';
                 } else {
-                    statusCell.innerHTML = '<span class="text-red-500 font-bold text-sm" title="One or more entries are incorrect"><i class="fa-solid fa-circle-xmark"></i> Incorrect</span>';
+                    const badFields = [];
+                    if (!isVisitOk) badFields.push(`Current Node (should be ${correct.visit})`);
+                    if (!isStructOk) badFields.push(`Structure (should be ${correct.struct})`);
+                    if (!isVisitedOk) badFields.push(`Visited (should be ${correct.visited})`);
+                    statusCell.innerHTML = `<span class="text-red-500 font-bold text-sm" title="${badFields.join(' | ')}"><i class="fa-solid fa-circle-xmark"></i> Incorrect</span>`;
                     allCorrect = false;
+                    wrongRows.push({ row: idx + 1, badFields });
                 }
             });
- 
-            return allCorrect;
+
+            return { allCorrect, wrongRows };
         }
- 
+
         const practiceQuestionBank = [
             'Which data structure does DFS use, and what is its removal order?',
             'Which data structure does BFS use, and what is its removal order?',
@@ -1228,7 +1238,7 @@
             'What is the time complexity of DFS and BFS with an adjacency list?',
             'Why does UCS always remove the lowest-cost frontier entry first?'
         ];
- 
+
         function renderPracticeChallenges() {
             const container = document.getElementById('practice-challenges');
             if (!container) return;
@@ -1238,26 +1248,46 @@
                     <h3 class="text-xs uppercase tracking-wider font-bold text-spidey-redGlow mb-2">Question ${index + 1}</h3>
                     <p class="text-sm text-slate-200">${question}</p>
                     <input aria-label="Answer to question ${index + 1}" type="text" class="practice-answer mt-3 bg-slate-900 border border-slate-700 rounded px-3 py-2 w-full text-sm text-slate-100" placeholder="Write your answer">
+                    <p id="practice-feedback-${index}" class="mt-2 text-xs"></p>
                 </article>
             `).join('');
         }
- 
+
         function resetQuiz() {
             renderQuizTable();
         }
- 
+
         function resetExercise() {
             resetQuiz();
             loadCodingExercise();
             document.querySelectorAll('.practice-answer').forEach(input => input.value = '');
+            document.querySelectorAll('[id^="practice-feedback-"]').forEach(el => el.innerHTML = '');
+            const summaryEl = document.getElementById('results-summary');
+            if (summaryEl) summaryEl.innerHTML = '';
         }
- 
+
         function validateAllAnswers() {
             // Run the code first: Question 3's answer key is whatever this run produces.
             const codeIsComplete = validateCode();
-            const traceIsCorrect = validateQuiz();
-            const writtenAreComplete = [...document.querySelectorAll('.practice-answer')].every(input => input.value.trim().length > 0);
+            const quizResult = validateQuiz();
+            const traceIsCorrect = quizResult.allCorrect;
+
+            const answerInputs = [...document.querySelectorAll('.practice-answer')];
+            let writtenAreComplete = true;
+            answerInputs.forEach((input, index) => {
+                const feedback = document.getElementById(`practice-feedback-${index}`);
+                if (input.value.trim().length === 0) {
+                    writtenAreComplete = false;
+                    if (feedback) feedback.innerHTML = '<span class="text-red-500"><i class="fa-solid fa-circle-xmark"></i> This question is still blank.</span>';
+                } else if (feedback) {
+                    feedback.innerHTML = '<span class="text-emerald-500"><i class="fa-solid fa-circle-check"></i> Answered.</span>';
+                }
+            });
+
+            const summaryEl = document.getElementById('results-summary');
+
             if (traceIsCorrect && codeIsComplete && writtenAreComplete) {
+                summaryEl.innerHTML = '';
                 completedLevels.add(currentLevel);
                 updateScoreBadge();
                 if (currentLevel < TOTAL_LEVELS) {
@@ -1268,13 +1298,43 @@
                 } else {
                     alert(`🏆 Level ${currentLevel} complete! You've reached the end of the lab.\n\nFinal score: ${completedLevels.size}/${TOTAL_LEVELS} exercises completed.`);
                 }
-            } else if (!writtenAreComplete) {
-                alert('Please answer both written questions before checking your work.');
-            } else {
-                alert('Some answers still need work. Review the trace table and code feedback, then try again.');
+                return;
             }
+
+            // Build a detailed explanation of what's still wrong, one card per question.
+            const cards = [];
+
+            if (writtenAreComplete) {
+                cards.push({ ok: true, title: 'Written questions', detail: 'Both questions are answered.' });
+            } else {
+                const blanks = answerInputs.map((i, idx) => i.value.trim() ? null : idx + 1).filter(Boolean);
+                cards.push({ ok: false, title: 'Written questions', detail: `Question${blanks.length > 1 ? 's' : ''} ${blanks.join(' and ')} still need${blanks.length > 1 ? '' : 's'} an answer.` });
+            }
+
+            if (traceIsCorrect) {
+                cards.push({ ok: true, title: 'Question 3 - Trace table', detail: 'Every row matches your code\'s execution.' });
+            } else if (activeQuizAnswers.length === 0) {
+                cards.push({ ok: false, title: 'Question 3 - Trace table', detail: 'Click Run on Question 4 first so this table has an answer key to check against.' });
+            } else {
+                const rowList = quizResult.wrongRows.map(r => `Row ${r.row} (${r.badFields.join(', ')})`).join('; ');
+                cards.push({ ok: false, title: 'Question 3 - Trace table', detail: `${quizResult.wrongRows.length} row${quizResult.wrongRows.length > 1 ? 's' : ''} incorrect - ${rowList}.` });
+            }
+
+            if (codeIsComplete) {
+                cards.push({ ok: true, title: 'Question 4 - Code', detail: 'Your code runs and reaches the goal.' });
+            } else {
+                cards.push({ ok: false, title: 'Question 4 - Code', detail: document.getElementById('code-status').innerText || 'Your code does not reach the goal yet.' });
+            }
+
+            summaryEl.innerHTML = cards.map(c => `
+                <div class="flex items-start gap-3 rounded-lg border px-4 py-3 text-sm ${c.ok ? 'border-emerald-900 bg-emerald-950/30 text-emerald-300' : 'border-red-900 bg-red-950/30 text-red-300'}">
+                    <i class="fa-solid ${c.ok ? 'fa-circle-check' : 'fa-circle-xmark'} mt-0.5"></i>
+                    <div><span class="font-bold">${c.title}:</span> ${c.detail}</div>
+                </div>
+            `).join('');
+            summaryEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
- 
+
         // Run application on start
         window.onload = init;
     </script>
